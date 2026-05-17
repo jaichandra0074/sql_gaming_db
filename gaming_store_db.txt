@@ -1,0 +1,222 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| chandu             |
+| da1                |
+| gaming_store_db    |
+| information_schema |
+| instagram_clone_db |
+| mysql              |
+| performance_schema |
+| pfs1               |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+11 rows in set (0.01 sec)
+
+mysql> use gaming_store_db;
+Database changed
+mysql> show tables;
++---------------------------+
+| Tables_in_gaming_store_db |
++---------------------------+
+| categories                |
+| customers                 |
+| games                     |
+| orders                    |
+| payments                  |
++---------------------------+
+5 rows in set (0.01 sec)
+
+mysql> -- 1. Display games with price greater than 2000
+mysql> 
+mysql> SELECT * 
+    -> FROM games
+    -> WHERE price > 2000;
++---------+------------------+---------+-------+-------------+
+| game_id | game_name        | price   | stock | category_id |
++---------+------------------+---------+-------+-------------+
+|    1001 | Shadow Strike    | 2499.00 |    15 |         101 |
+|    1004 | Football Legends | 2999.00 |     8 |         104 |
++---------+------------------+---------+-------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 2. Display customers from Hyderabad
+mysql> 
+mysql> SELECT * 
+    -> FROM customers
+    -> WHERE city = 'Hyderabad';
++-------------+---------------+-----------------+-----------+
+| customer_id | customer_name | email           | city      |
++-------------+---------------+-----------------+-----------+
+|           1 | Arjun         | arjun@gmail.com | Hyderabad |
++-------------+---------------+-----------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> -- 3. Display games with stock between 10 and 18
+mysql> 
+mysql> SELECT * 
+    -> FROM games
+    -> WHERE stock BETWEEN 10 AND 18;
++---------+------------------+---------+-------+-------------+
+| game_id | game_name        | price   | stock | category_id |
++---------+------------------+---------+-------+-------------+
+|    1001 | Shadow Strike    | 2499.00 |    15 |         101 |
+|    1002 | Dragon Quest     | 1999.00 |    10 |         102 |
+|    1005 | Battle Arena     | 1799.00 |    12 |         101 |
+|    1006 | Jungle Adventure | 1599.00 |    18 |         102 |
++---------+------------------+---------+-------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 4. Display games whose names start with 'S'
+mysql> 
+mysql> SELECT * 
+    -> FROM games
+    -> WHERE game_name LIKE 'S%';
++---------+---------------+---------+-------+-------------+
+| game_id | game_name     | price   | stock | category_id |
++---------+---------------+---------+-------+-------------+
+|    1001 | Shadow Strike | 2499.00 |    15 |         101 |
+|    1003 | Speed Racer X | 1499.00 |    20 |         103 |
++---------+---------------+---------+-------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> --Intermediate Queries
+    -> -- 5. Count total number of games in each category
+    -> 
+    -> SELECT category_id, COUNT(*) AS total_games
+    -> FROM games
+    -> GROUP BY category_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '--Intermediate Queries
+
+
+SELECT category_id, COUNT(*) AS total_games
+FROM games
+' at line 1
+mysql> -- 5. Count total number of games in each category
+mysql> 
+mysql> SELECT category_id, COUNT(*) AS total_games
+    -> FROM games
+    -> GROUP BY category_id;
++-------------+-------------+
+| category_id | total_games |
++-------------+-------------+
+|         101 |           2 |
+|         102 |           2 |
+|         103 |           1 |
+|         104 |           1 |
++-------------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 6. Find average game price in the store
+mysql> 
+mysql> SELECT AVG(price) AS average_price
+    -> FROM games;
++---------------+
+| average_price |
++---------------+
+|   2065.666667 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> -- 7. Display maximum game price in each category
+mysql> 
+mysql> SELECT category_id, MAX(price) AS max_price
+    -> FROM games
+    -> GROUP BY category_id;
++-------------+-----------+
+| category_id | max_price |
++-------------+-----------+
+|         101 |   2499.00 |
+|         102 |   1999.00 |
+|         103 |   1499.00 |
+|         104 |   2999.00 |
++-------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> -- 8. Display categories having more than one game
+mysql> 
+mysql> SELECT category_id, COUNT(*) AS total_games
+    -> FROM games
+    -> GROUP BY category_id
+    -> HAVING COUNT(*) > 1;
++-------------+-------------+
+| category_id | total_games |
++-------------+-------------+
+|         101 |           2 |
+|         102 |           2 |
++-------------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> -- Hard Queries
+mysql> -- 9. Display customer names with their order details
+mysql> 
+mysql> SELECT c.customer_name, o.order_id, o.total_amount
+    -> FROM customers c
+    -> INNER JOIN orders o
+    -> ON c.customer_id = o.customer_id;
++---------------+----------+--------------+
+| customer_name | order_id | total_amount |
++---------------+----------+--------------+
+| Arjun         |     5001 |      2499.00 |
+| Sai           |     5002 |      1999.00 |
+| Rahul         |     5003 |      1499.00 |
+| Arjun         |     5004 |      2999.00 |
+| Kiran         |     5005 |      1799.00 |
++---------------+----------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 10. Display payment details with order information
+mysql> 
+mysql> SELECT o.order_id, o.order_date, p.payment_method, p.payment_status
+    -> FROM orders o
+    -> INNER JOIN payments p
+    -> ON o.order_id = p.order_id;
++----------+------------+----------------+----------------+
+| order_id | order_date | payment_method | payment_status |
++----------+------------+----------------+----------------+
+|     5001 | 2026-05-01 | UPI            | Paid           |
+|     5002 | 2026-05-03 | Card           | Paid           |
+|     5003 | 2026-05-05 | Cash           | Pending        |
+|     5004 | 2026-05-07 | UPI            | Paid           |
+|     5005 | 2026-05-10 | Card           | Pending        |
++----------+------------+----------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 11. Display games with price higher than average game price
+mysql> 
+mysql> SELECT game_name, price
+    -> FROM games
+    -> WHERE price > (
+    ->     SELECT AVG(price)
+    ->     FROM games
+    -> );
++------------------+---------+
+| game_name        | price   |
++------------------+---------+
+| Shadow Strike    | 2499.00 |
+| Football Legends | 2999.00 |
++------------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> -- 12. Display customers who placed more than one order
+mysql> 
+mysql> SELECT customer_name
+    -> FROM customers
+    -> WHERE customer_id IN (
+    ->     SELECT customer_id
+    ->     FROM orders
+    ->     GROUP BY customer_id
+    ->     HAVING COUNT(order_id) > 1
+    -> );
++---------------+
+| customer_name |
++---------------+
+| Arjun         |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> ^C
+mysql> Terminal close -- exit!
