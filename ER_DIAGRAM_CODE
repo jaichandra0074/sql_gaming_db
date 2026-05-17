@@ -1,0 +1,101 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table customers {
+  customer_id integer [primary key]
+  customer_name varchar
+  email varchar
+  city varchar
+}
+
+Table categories {
+  category_id integer [primary key]
+  category_name varchar
+}
+
+Table games {
+  game_id integer [primary key]
+  game_name varchar
+  price decimal
+  stock integer
+  category_id integer [not null]
+}
+
+Table orders {
+  order_id integer [primary key]
+  customer_id integer [not null]
+  order_date date
+  total_amount decimal
+}
+
+Table payments {
+  payment_id integer [primary key]
+  order_id integer [not null]
+  payment_method varchar
+  payment_status varchar
+}
+
+
+// Relationships
+
+Ref customer_orders: orders.customer_id > customers.customer_id // many-to-one
+
+Ref category_games: games.category_id > categories.category_id // many-to-one
+
+Ref order_payments: payments.order_id > orders.order_id // one-to-one
+
+
+
+// Records for customers
+
+Records customers(customer_id, customer_name, email, city) {
+  1, 'Arjun', 'arjun@gmail.com', 'Hyderabad'
+  2, 'Sai', 'sai@gmail.com', 'Vijayawada'
+  3, 'Rahul', 'rahul@gmail.com', 'Guntur'
+  4, 'Kiran', 'kiran@gmail.com', 'Vizag'
+  5, 'Teja', 'teja@gmail.com', 'Tirupati'
+}
+
+
+// Records for categories
+
+Records categories(category_id, category_name) {
+  101, 'Action'
+  102, 'Adventure'
+  103, 'Racing'
+  104, 'Sports'
+}
+
+
+// Records for games
+
+Records games(game_id, game_name, price, stock, category_id) {
+  1001, 'Shadow Strike', 2499.00, 15, 101
+  1002, 'Dragon Quest', 1999.00, 10, 102
+  1003, 'Speed Racer X', 1499.00, 20, 103
+  1004, 'Football Legends', 2999.00, 8, 104
+  1005, 'Battle Arena', 1799.00, 12, 101
+  1006, 'Jungle Adventure', 1599.00, 18, 102
+}
+
+
+// Records for orders
+
+Records orders(order_id, customer_id, order_date, total_amount) {
+  5001, 1, '2026-05-01', 2499.00
+  5002, 2, '2026-05-03', 1999.00
+  5003, 3, '2026-05-05', 1499.00
+  5004, 1, '2026-05-07', 2999.00
+  5005, 4, '2026-05-10', 1799.00
+}
+
+
+// Records for payments
+
+Records payments(payment_id, order_id, payment_method, payment_status) {
+  9001, 5001, 'UPI', 'Paid'
+  9002, 5002, 'Card', 'Paid'
+  9003, 5003, 'Cash', 'Pending'
+  9004, 5004, 'UPI', 'Paid'
+  9005, 5005, 'Card', 'Pending'
+}
